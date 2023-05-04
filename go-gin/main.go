@@ -1,13 +1,20 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-    "github.com/gin-contrib/cors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-
-// album represents data about a record album.
 type tutorial struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -17,29 +24,79 @@ type tutorial struct {
 	ID          string `json:"id"`
 }
 
-// albums slice to seed record album data.
 var tutorialList = []tutorial{
-	{Title: "Tutorial 1", Description: "This is tutorial 1", Published: false, 
-    CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "644f29bc21eb646280e59c84"},
-	{Title: "Tutorial 2", Description: "This is tutorial 2", Published: false, 
-    CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "644f29c2acefe3e62a866731"},
-	{Title: "Tutorial 3", Description: "This is tutorial 3", Published: false, 
-    CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "644f2a0eacefe3e62a866735"},
+	{Title: "Tutorial A", Description: "This is tutorial A", Published: false,
+		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "644f29bc21eb646280e59c84"},
+	{Title: "Tutorial B", Description: "This is tutorial B", Published: false,
+		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "644f29c2acefe3e62a866731"},
+	{Title: "Tutorial C", Description: "This is tutorial C", Published: false,
+		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "644f2a0eacefe3e62a866735"},
 }
 
 func main() {
+	credential := options.Credential{
+		AuthMechanism: "SCRAM-SHA-256",
+		AuthSource:    "admin",
+		Username:      "root",
+		Password:      "brHZ-!_rHAZF4xR2-EsRKx9e",
+	}
+
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:28001").SetAuth(credential))
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	collection := client.Database("tutorial").Collection("tutorial_collection")
+	filter := bson.D{{}}
+
+	cursor, err := collection.Find(context.TODO(), filter)
+
+	if err != nil {
+		panic(err)
+	}
+
+	var results []tutorial
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		panic(err)
+	}
+
+	for _, result := range results {
+		cursor.Decode(&result)
+		output, err := json.MarshalIndent(result, "", "    ")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%s\n", output)
+		tutorialList = results
+	}
+
+	defer client.Disconnect(ctx)
+
+	// /*
+	//         List databases
+	// */
+	// databases, err := client.ListDatabaseNames(ctx, bson.M{})
+	// if err != nil {
+	//     log.Fatal(err)
+	// }
+	// fmt.Println(databases)
+
 	router := gin.Default()
-    config := cors.DefaultConfig()
-    config.AllowOrigins = []string{
-        "http://localhost:8081",
-    }
-    router.Use(cors.New(config))
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{
+		"http://localhost:8081",
+	}
+	router.Use(cors.New(config))
 	router.GET("/api/tutorials", getAllTutorials)
 	router.Run("localhost:8080")
 }
 
-
 func getAllTutorials(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, tutorialList)
-    println("getAllTutorials")
+	println("getAllTutorials")
 }
