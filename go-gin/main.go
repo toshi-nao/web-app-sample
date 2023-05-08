@@ -1,18 +1,10 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type tutorial struct {
@@ -34,48 +26,6 @@ var tutorialList = []tutorial{
 }
 
 func main() {
-	credential := options.Credential{
-		AuthMechanism: "SCRAM-SHA-256",
-		AuthSource:    "admin",
-		Username:      "root",
-		Password:      "brHZ-!_rHAZF4xR2-EsRKx9e",
-	}
-
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:28001").SetAuth(credential))
-	if err != nil {
-		log.Fatal(err)
-	}
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	err = client.Connect(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	collection := client.Database("tutorial").Collection("tutorial_collection")
-	filter := bson.D{{}}
-
-	cursor, err := collection.Find(context.TODO(), filter)
-
-	if err != nil {
-		panic(err)
-	}
-
-	var results []tutorial
-	if err = cursor.All(context.TODO(), &results); err != nil {
-		panic(err)
-	}
-
-	for _, result := range results {
-		cursor.Decode(&result)
-		output, err := json.MarshalIndent(result, "", "    ")
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("%s\n", output)
-		tutorialList = results
-	}
-
-	defer client.Disconnect(ctx)
 
 	// /*
 	//         List databases
