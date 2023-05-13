@@ -33,6 +33,15 @@ var tutorialList = []tutorial{
 		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "644f2a0eacefe3e62a866735"},
 }
 
+var tutorialPostList = []tutorial{
+	{Title: "Tutorial Post A", Description: "This is tutorial Post A", Published: false,
+		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "1"},
+	{Title: "Tutorial Post B", Description: "This is tutorial Post B", Published: false,
+		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "2"},
+	{Title: "Tutorial Post C", Description: "This is tutorial Post C", Published: false,
+		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "3"},
+}
+
 func main() {
 	credential := options.Credential{
 		AuthMechanism: "SCRAM-SHA-256",
@@ -93,10 +102,34 @@ func main() {
 	}
 	router.Use(cors.New(config))
 	router.GET("/api/tutorials", getAllTutorials)
+	router.PUT("/api/tutorials", insertTutorials)
+	router.POST("/api/tutorials", updateTutorials)
+	router.DELETE("/api/tutorials", deleteTutorials)
 	router.Run("localhost:8080")
 }
 
 func getAllTutorials(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, tutorialList)
 	println("getAllTutorials")
+}
+
+func insertTutorials(c *gin.Context) {
+	// TODO
+	// Get Request date from body and Insert them to collenction
+	c.IndentedJSON(200, "OK")
+	println("insertTutorials")
+}
+
+func updateTutorials(c *gin.Context) {
+	// TODO
+	// Determine update target by PK and update
+	c.IndentedJSON(200, "OK")
+	println("updateTutorials")
+}
+
+func deleteTutorials(c *gin.Context) {
+	// TODO
+	// Determine detele target by PK and dlete
+	c.IndentedJSON(200, "OK")
+	println("deleteTutorials")
 }
