@@ -116,20 +116,32 @@ func getAllTutorials(c *gin.Context) {
 func insertTutorials(c *gin.Context) {
 	// TODO
 	// Get Request date from body and Insert them to collenction
-	c.IndentedJSON(200, "OK")
+
+	// Parse JSON from Request Body
+	var json tutorial
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Echo Reqested Data
+	println(json.Description)
+
+	c.IndentedJSON(http.StatusOK, gin.H{"Title": json.Title, "Description": json.Description, "ID": json.ID})
+
 	println("insertTutorials")
 }
 
 func updateTutorials(c *gin.Context) {
 	// TODO
 	// Determine update target by PK and update
-	c.IndentedJSON(200, "OK")
+	c.IndentedJSON(http.StatusOK, "OK")
 	println("updateTutorials")
 }
 
 func deleteTutorials(c *gin.Context) {
 	// TODO
 	// Determine detele target by PK and dlete
-	c.IndentedJSON(200, "OK")
+	c.IndentedJSON(http.StatusOK, "OK")
 	println("deleteTutorials")
 }
