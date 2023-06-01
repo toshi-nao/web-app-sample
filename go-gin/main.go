@@ -43,6 +43,22 @@ var tutorialPostList = []tutorial{
 }
 
 func main() {
+
+	router := gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{
+		"http://localhost:8081",
+	}
+	router.Use(cors.New(config))
+	router.GET("/api/tutorials", getAllTutorials)
+	router.PUT("/api/tutorials", insertTutorials)
+	router.POST("/api/tutorials", updateTutorials)
+	router.DELETE("/api/tutorials", deleteTutorials)
+	router.Run("localhost:8080")
+}
+
+func getAllTutorials(c *gin.Context) {
+
 	credential := options.Credential{
 		AuthMechanism: "SCRAM-SHA-256",
 		AuthSource:    "admin",
@@ -85,30 +101,9 @@ func main() {
 	}
 
 	defer client.Disconnect(ctx)
+	println("main method")
+	println(tutorialList[0].Description)
 
-	// /*
-	//         List databases
-	// */
-	// databases, err := client.ListDatabaseNames(ctx, bson.M{})
-	// if err != nil {
-	//     log.Fatal(err)
-	// }
-	// fmt.Println(databases)
-
-	router := gin.Default()
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{
-		"http://localhost:8081",
-	}
-	router.Use(cors.New(config))
-	router.GET("/api/tutorials", getAllTutorials)
-	router.PUT("/api/tutorials", insertTutorials)
-	router.POST("/api/tutorials", updateTutorials)
-	router.DELETE("/api/tutorials", deleteTutorials)
-	router.Run("localhost:8080")
-}
-
-func getAllTutorials(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, tutorialList)
 	println("getAllTutorials")
 }
