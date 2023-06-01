@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go-gin/models"
 	"log"
 	"net/http"
 	"time"
@@ -15,16 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type tutorial struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Published   bool   `json:"published"`
-	CreatedAt   string `json:"createdAt"`
-	UpdatedAt   string `json:"updatedAt"`
-	ID          string `json:"id"`
-}
-
-var tutorialList = []tutorial{
+var tutorialList = []models.Tutorial{
 	{Title: "Tutorial A", Description: "This is tutorial A", Published: false,
 		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "644f29bc21eb646280e59c84"},
 	{Title: "Tutorial B", Description: "This is tutorial B", Published: false,
@@ -33,7 +25,7 @@ var tutorialList = []tutorial{
 		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "644f2a0eacefe3e62a866735"},
 }
 
-var tutorialPostList = []tutorial{
+var tutorialPostList = []models.Tutorial{
 	{Title: "Tutorial Post A", Description: "This is tutorial Post A", Published: false,
 		CreatedAt: "2023-05-01T02:53:48.690Z", UpdatedAt: "2023-05-01T02:53:48.690Z", ID: "1"},
 	{Title: "Tutorial Post B", Description: "This is tutorial Post B", Published: false,
@@ -85,7 +77,7 @@ func getAllTutorials(c *gin.Context) {
 		panic(err)
 	}
 
-	var results []tutorial
+	var results []models.Tutorial
 	if err = cursor.All(context.TODO(), &results); err != nil {
 		panic(err)
 	}
@@ -113,7 +105,7 @@ func insertTutorials(c *gin.Context) {
 	// Get Request date from body and Insert them to collenction
 
 	// Parse JSON from Request Body
-	var json tutorial
+	var json models.Tutorial
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
