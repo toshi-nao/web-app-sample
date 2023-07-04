@@ -37,8 +37,8 @@ func GetAllTutorials() gin.HandlerFunc {
 				panic(err)
 			}
 			fmt.Printf("%s\n", output)
-			tutorialList = results
 		}
+		tutorialList = results
 
 		c.IndentedJSON(http.StatusOK, tutorialList)
 		println("getAllTutorials")
