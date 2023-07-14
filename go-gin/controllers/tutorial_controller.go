@@ -7,6 +7,7 @@ import (
 	"go-gin/configs"
 	"go-gin/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -77,60 +78,41 @@ func UpdateTutorials() gin.HandlerFunc {
 		// defer cancel()
 		objId, _ := primitive.ObjectIDFromHex(ID)
 
-		// println("objId", objId)
 		if err := c.BindJSON(&tutorial); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
 			return
 		}
-		println("title:", tutorial.Title)
-		println("description:", tutorial.Description)
 
-		// //validate the request body
-		// if err := c.BindJSON(&tutorial); err != nil {
-		//     c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-		//     return
-		// }
-
-		// //use the validator library to validate required fields
-		// if validationErr := validate.Struct(&user); validationErr != nil {
-		//     c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
-		//     return
-		// }
-
-		// update := bson.M{"title": tutorial.Title, "description": tutorial.Description}
-		// println("Updated:", update)
-		// coll.FindOne(context.TODO(), filter).Decode(&result)
-		var result models.Tutorial
 		filter := bson.M{"_id": objId}
-		err := collection.FindOne(c, filter).Decode(&result)
-		// result, err := collection.UpdateOne(c, bson.M{"id": objId}, bson.M{"$set": update})
-		if err != nil {
-			// c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-			panic(err)
-			// return
+		update := bson.M{
+			"$set": bson.M{
+				"title":       tutorial.Title,
+				"description": tutorial.Description,
+				"published":   tutorial.Published,
+				"updatedAt":   time.Now().Format(time.RFC3339),
+			},
 		}
-		println(result.Title)
-		println(result.Description)
-		// res := map[string]interface{}{"data": result}
 
-		//get updated user details
-		// var updatedTutorial models.Tutorial
-		// println("MC:" , result.MatchedCount)
-		// if result.MatchedCount == 1 {
-		//     err := collection.FindOne(c, bson.M{"id": objId}).Decode(&updatedTutorial)
-		//     if err != nil {
-		//         // c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-		// 		panic(err)
-		//         // return
-		//     }
-		// }
+		//update a single tutorial by _id
+		updateResult, err := collection.UpdateOne(c, filter, update)
+		if err != nil {
+			panic(err)
+		}
 
-		// c.IndentedJSON(http.StatusOK, gin.H{"Title": updatedTutorial.Title, "Description": updatedTutorial.Description, "ID": updatedTutorial.ID})
-		// output, err := json.MarshalIndent(updatedTutorial, "", "    ")
-		// 	if err != nil {
-		// 		panic(err)
-		// 	}
-		// fmt.Printf("%s\n", output)
+		//get updated tutorial details
+		var updatedTutorial models.Tutorial
+		if updateResult.MatchedCount == 1 {
+			err := collection.FindOne(c, bson.M{"_id": objId}).Decode(&updatedTutorial)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		output, err := json.MarshalIndent(updatedTutorial, "", "    ")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%s\n", output)
 	}
 }
 
