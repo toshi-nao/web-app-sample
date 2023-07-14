@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func GetAllTutorials() gin.HandlerFunc {
@@ -77,9 +78,19 @@ func UpdateTutorials() gin.HandlerFunc {
 
 func DeleteTutorials() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// TODO
 		// Determine detele target by PK and dlete
+
+		// get parameter id from request parameter
+		id := c.Param("id")
+
+		// change id to ObjectId
+		objId, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+			return
+		}
+
 		c.IndentedJSON(http.StatusOK, "OK")
-		println("deleteTutorials")
+		println("deleteTutorials %d", &objId)
 	}
 }
