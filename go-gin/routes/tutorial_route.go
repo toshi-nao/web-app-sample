@@ -10,5 +10,5 @@ func TutorialRoute(router *gin.Engine) {
 	router.GET("/api/tutorials", controllers.GetAllTutorials())
 	router.PUT("/api/tutorials", controllers.InsertTutorials())
 	router.POST("/api/tutorials", controllers.UpdateTutorials())
-	router.DELETE("/api/tutorials", controllers.DeleteTutorials())
+	router.DELETE("/api/tutorials/:id", controllers.DeleteTutorials())
 }
