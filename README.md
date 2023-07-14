@@ -21,7 +21,7 @@ Test connection to MongoDB with mongosh
 mongosh mongodb://root:'brHZ-!_rHAZF4xR2-EsRKx9e'@localhost:28001/admin
 ```
 
-How tp Use mongosh
+How to use mongosh
 ```mongo
 admin> use tutorial
 turotial> db.tutorial_collection.find()
