@@ -128,7 +128,7 @@ func DeleteTutorials() gin.HandlerFunc {
 
 		_, err := collection.DeleteOne(context.TODO(), bson.M{"_id": objId})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete tutorial"})
 			return
 		}
 
