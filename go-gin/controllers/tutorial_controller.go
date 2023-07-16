@@ -122,8 +122,6 @@ func DeleteTutorials() gin.HandlerFunc {
 		collection := client.Database("tutorial").Collection("tutorial_collection")
 
 		ID := c.Param("id")
-		println(ID)
-		// defer cancel()
 		objId, _ := primitive.ObjectIDFromHex(ID)
 
 		_, err := collection.DeleteOne(context.TODO(), bson.M{"_id": objId})
