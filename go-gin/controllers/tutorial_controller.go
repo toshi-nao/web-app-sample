@@ -118,29 +118,20 @@ func UpdateTutorials() gin.HandlerFunc {
 
 func DeleteTutorials() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Determine detele target by PK and dlete
-
-		// get parameter id from request parameter
-		id := "644f29bc21eb646280e59c84"
-
-		// change id to ObjectId
-		// objId, err := primitive.ObjectIDFromHex(id)
-		//if err != nil {
-		//	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		//	return
-		//}
-
-		// delete document
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
 
-		_, err := collection.DeleteOne(context.TODO(), bson.M{"id": id})
+		ID := c.Param("id")
+		println(ID)
+		// defer cancel()
+		objId, _ := primitive.ObjectIDFromHex(ID)
+
+		_, err := collection.DeleteOne(context.TODO(), bson.M{"_id": objId})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
 			return
 		}
 
 		c.IndentedJSON(http.StatusOK, "OK")
-		println("deleteTutorials %s", id)
 	}
 }
