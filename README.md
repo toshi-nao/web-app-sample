@@ -1,4 +1,4 @@
-# web-app-sample
+d# web-app-sample
 ## Database: MongoDB
 
 ```sh
@@ -20,8 +20,11 @@ Test connection to MongoDB with mongosh
 ```sh
 mongosh mongodb://root:'brHZ-!_rHAZF4xR2-EsRKx9e'@localhost:28001/admin
 ```
+
+How to use mongosh
 ```mongo
-admin> exit
+admin> use tutorial
+turotial> db.tutorial_collection.find()
 ```
 
 ## `/go-gin/`: Back-end sample by Go with Gin Framework
