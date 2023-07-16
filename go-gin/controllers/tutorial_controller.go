@@ -118,9 +118,18 @@ func UpdateTutorials() gin.HandlerFunc {
 
 func DeleteTutorials() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// TODO
-		// Determine detele target by PK and dlete
+		client := configs.ConnectDB()
+		collection := client.Database("tutorial").Collection("tutorial_collection")
+
+		ID := c.Param("id")
+		objId, _ := primitive.ObjectIDFromHex(ID)
+
+		_, err := collection.DeleteOne(context.TODO(), bson.M{"_id": objId})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete tutorial"})
+			return
+		}
+
 		c.IndentedJSON(http.StatusOK, "OK")
-		println("deleteTutorials")
 	}
 }
