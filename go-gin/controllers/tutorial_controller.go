@@ -46,7 +46,7 @@ func GetAllTutorials() gin.HandlerFunc {
 	}
 }
 
-func InsertTutorials() gin.HandlerFunc {
+func CreateTutorials() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// TODO
 		// Get Request date from body and Insert them to collenction
