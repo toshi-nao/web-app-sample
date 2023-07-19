@@ -46,7 +46,7 @@ func GetAllTutorials() gin.HandlerFunc {
 	}
 }
 
-func CreateTutorials() gin.HandlerFunc {
+func CreateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
@@ -60,16 +60,14 @@ func CreateTutorials() gin.HandlerFunc {
 		}
 
 		newTutorial := bson.M{
-			"$set": bson.M{
-				"title":       tutorial.Title,
-				"description": tutorial.Description,
-				"published":   tutorial.Published,
-				"createdAt":   time.Now().Format(time.RFC3339),
-				"updatedAt":   time.Now().Format(time.RFC3339),
-			},
+			"title":       tutorial.Title,
+			"description": tutorial.Description,
+			"published":   tutorial.Published,
+			"createdAt":   time.Now().Format(time.RFC3339),
+			"updatedAt":   time.Now().Format(time.RFC3339),
 		}
 
-		//Insert a sing le tutorial
+		//Insert a single tutorial
 		_, err := collection.InsertOne(c, newTutorial)
 		if err != nil {
 			panic(err)
@@ -78,7 +76,7 @@ func CreateTutorials() gin.HandlerFunc {
 	}
 }
 
-func UpdateTutorials() gin.HandlerFunc {
+func UpdateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
@@ -127,7 +125,7 @@ func UpdateTutorials() gin.HandlerFunc {
 	}
 }
 
-func DeleteTutorials() gin.HandlerFunc {
+func DeleteTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
