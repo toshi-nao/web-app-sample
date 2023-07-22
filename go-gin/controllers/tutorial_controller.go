@@ -46,28 +46,37 @@ func GetAllTutorials() gin.HandlerFunc {
 	}
 }
 
-func InsertTutorials() gin.HandlerFunc {
+func CreateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// TODO
-		// Get Request date from body and Insert them to collenction
+		client := configs.ConnectDB()
+		collection := client.Database("tutorial").Collection("tutorial_collection")
 
-		// Parse JSON from Request Body
-		var json models.Tutorial
-		if err := c.ShouldBindJSON(&json); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		var tutorial models.Tutorial
+
+		// get tutorial data from request
+		if err := c.BindJSON(&tutorial); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
 			return
 		}
 
-		// Echo Reqested Data
-		println(json.Description)
+		newTutorial := bson.M{
+			"title":       tutorial.Title,
+			"description": tutorial.Description,
+			"published":   tutorial.Published,
+			"createdAt":   time.Now().Format(time.RFC3339),
+			"updatedAt":   time.Now().Format(time.RFC3339),
+		}
 
-		c.IndentedJSON(http.StatusOK, gin.H{"Title": json.Title, "Description": json.Description, "ID": json.ID})
+		//Insert a single tutorial
+		_, err := collection.InsertOne(c, newTutorial)
+		if err != nil {
+			panic(err)
+		}
 
-		println("insertTutorials")
 	}
 }
 
-func UpdateTutorials() gin.HandlerFunc {
+func UpdateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
@@ -116,7 +125,7 @@ func UpdateTutorials() gin.HandlerFunc {
 	}
 }
 
-func DeleteTutorials() gin.HandlerFunc {
+func DeleteTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
