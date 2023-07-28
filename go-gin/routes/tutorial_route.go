@@ -8,7 +8,7 @@ import (
 
 func TutorialRoute(router *gin.Engine) {
 	router.GET("/api/tutorials", controllers.GetAllTutorials())
-	router.PUT("/api/tutorials", controllers.CreateTutorial())
-	router.POST("/api/tutorials/:id", controllers.UpdateTutorial())
+	router.POST("/api/tutorials", controllers.CreateTutorial())
+	router.PUT("/api/tutorials/:id", controllers.UpdateTutorial())
 	router.DELETE("/api/tutorials/:id", controllers.DeleteTutorial())
 }
