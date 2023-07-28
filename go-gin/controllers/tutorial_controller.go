@@ -16,18 +16,21 @@ import (
 
 func GetAllTutorials() gin.HandlerFunc {
 	return func(c *gin.Context) {
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        defer cancel()
+
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
 		filter := bson.D{{}}
 
-		cursor, err := collection.Find(context.TODO(), filter)
+		cursor, err := collection.Find(ctx, filter)
 
 		if err != nil {
 			panic(err)
 		}
 
 		var results []models.Tutorial
-		if err = cursor.All(context.TODO(), &results); err != nil {
+		if err = cursor.All(ctx, &results); err != nil {
 			panic(err)
 		}
 
@@ -48,6 +51,9 @@ func GetAllTutorials() gin.HandlerFunc {
 
 func CreateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        defer cancel()
+
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
 
@@ -68,7 +74,7 @@ func CreateTutorial() gin.HandlerFunc {
 		}
 
 		//Insert a single tutorial
-		_, err := collection.InsertOne(c, newTutorial)
+		_, err := collection.InsertOne(ctx, newTutorial)
 		if err != nil {
 			panic(err)
 		}
@@ -78,13 +84,16 @@ func CreateTutorial() gin.HandlerFunc {
 
 func UpdateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        defer cancel()
+
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
 
 		ID := c.Param("id")
 		println(ID)
 		var tutorial models.Tutorial
-		// defer cancel()
+		
 		objId, _ := primitive.ObjectIDFromHex(ID)
 
 		if err := c.BindJSON(&tutorial); err != nil {
@@ -103,7 +112,7 @@ func UpdateTutorial() gin.HandlerFunc {
 		}
 
 		//update a single tutorial by _id
-		updateResult, err := collection.UpdateOne(c, filter, update)
+		updateResult, err := collection.UpdateOne(ctx, filter, update)
 		if err != nil {
 			panic(err)
 		}
@@ -111,7 +120,7 @@ func UpdateTutorial() gin.HandlerFunc {
 		//get updated tutorial details
 		var updatedTutorial models.Tutorial
 		if updateResult.MatchedCount == 1 {
-			err := collection.FindOne(c, bson.M{"_id": objId}).Decode(&updatedTutorial)
+			err := collection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedTutorial)
 			if err != nil {
 				panic(err)
 			}
@@ -127,13 +136,16 @@ func UpdateTutorial() gin.HandlerFunc {
 
 func DeleteTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        defer cancel()
+
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
 
 		ID := c.Param("id")
 		objId, _ := primitive.ObjectIDFromHex(ID)
 
-		_, err := collection.DeleteOne(context.TODO(), bson.M{"_id": objId})
+		_, err := collection.DeleteOne(ctx, bson.M{"_id": objId})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete tutorial"})
 			return
