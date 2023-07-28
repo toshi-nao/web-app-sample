@@ -30,7 +30,7 @@ func GetAllTutorials() gin.HandlerFunc {
 		}
 
 		var results []models.Tutorial
-		if err = cursor.All(context.TODO(), &results); err != nil {
+		if err = cursor.All(ctx, &results); err != nil {
 			panic(err)
 		}
 
