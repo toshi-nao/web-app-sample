@@ -16,8 +16,8 @@ import (
 
 func GetAllTutorials() gin.HandlerFunc {
 	return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
@@ -49,10 +49,41 @@ func GetAllTutorials() gin.HandlerFunc {
 	}
 }
 
+func GetTutorial() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		client := configs.ConnectDB()
+		collection := client.Database("tutorial").Collection("tutorial_collection")
+
+		id := c.Param("id")
+		println(id)
+
+		objId, _ := primitive.ObjectIDFromHex(id)
+
+		//get updated tutorial details
+		var tutorial models.Tutorial
+		err := collection.FindOne(ctx, bson.M{"_id": objId}).Decode(&tutorial)
+		if err != nil {
+			panic(err)
+		}
+
+		output, err := json.MarshalIndent(tutorial, "", "    ")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%s\n", output)
+
+		c.IndentedJSON(http.StatusOK, tutorial)
+
+	}
+}
+
 func CreateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
@@ -84,17 +115,17 @@ func CreateTutorial() gin.HandlerFunc {
 
 func UpdateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
 
-		ID := c.Param("id")
-		println(ID)
+		id := c.Param("id")
+		println(id)
 		var tutorial models.Tutorial
-		
-		objId, _ := primitive.ObjectIDFromHex(ID)
+
+		objId, _ := primitive.ObjectIDFromHex(id)
 
 		if err := c.BindJSON(&tutorial); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
@@ -136,8 +167,8 @@ func UpdateTutorial() gin.HandlerFunc {
 
 func DeleteTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
