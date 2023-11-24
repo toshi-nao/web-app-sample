@@ -185,3 +185,20 @@ func DeleteTutorial() gin.HandlerFunc {
 		c.IndentedJSON(http.StatusOK, "OK")
 	}
 }
+
+func DeleteAllTutorials() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		client := configs.ConnectDB()
+		collection := client.Database("tutorial").Collection("tutorial_collection")
+		filter := bson.D{{}}
+
+		_, err := collection.DeleteMany(ctx, filter)
+
+		if err != nil {
+			panic(err)
+		}
+	}
+}
