@@ -42,7 +42,7 @@
     data() {
       return {
         tutorial: {
-          id: null,
+          Id: null,
           title: "",
           description: "",
           published: false
@@ -59,7 +59,7 @@
   
         TutorialDataService.create(data)
           .then(response => {
-            this.tutorial.id = response.data.id;
+            this.tutorial.Id = response.data.Id;
             console.log(response.data);
             this.submitted = true;
           })

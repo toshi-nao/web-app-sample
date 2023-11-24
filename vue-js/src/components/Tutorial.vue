@@ -76,16 +76,16 @@
             console.log(e);
           });
       },
-  
+      
       updatePublished(status) {
         var data = {
-          id: this.currentTutorial.id,
+          Id: this.currentTutorial.Id,
           title: this.currentTutorial.title,
           description: this.currentTutorial.description,
           published: status
         };
   
-        TutorialDataService.update(this.currentTutorial.id, data)
+        TutorialDataService.update(this.currentTutorial.Id, data)
           .then(response => {
             this.currentTutorial.published = status;
             console.log(response.data);
@@ -96,7 +96,7 @@
       },
   
       updateTutorial() {
-        TutorialDataService.update(this.currentTutorial.id, this.currentTutorial)
+        TutorialDataService.update(this.currentTutorial.Id, this.currentTutorial)
           .then(response => {
             console.log(response.data);
             this.message = 'The tutorial was updated successfully!';
@@ -107,7 +107,7 @@
       },
   
       deleteTutorial() {
-        TutorialDataService.delete(this.currentTutorial.id)
+        TutorialDataService.delete(this.currentTutorial.Id)
           .then(response => {
             console.log(response.data);
             this.$router.push({ name: "tutorials" });
@@ -119,7 +119,7 @@
     },
     mounted() {
       this.message = '';
-      this.getTutorial(this.$route.params.id);
+      this.getTutorial(this.$route.params.Id);
     }
   };
   </script>

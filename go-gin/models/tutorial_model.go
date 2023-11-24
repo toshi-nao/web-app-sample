@@ -8,5 +8,5 @@ type Tutorial struct {
 	Published   bool               `json:"published"`
 	CreatedAt   string             `json:"createdAt"`
 	UpdatedAt   string             `json:"updatedAt"`
-	ID          primitive.ObjectID `bson:"_id"`
+	Id          primitive.ObjectID `bson:"_id"`
 }
