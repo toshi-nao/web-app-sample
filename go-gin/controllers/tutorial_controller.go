@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go-gin/configs"
 	"go-gin/models"
+	"html"
 	"net/http"
 	"time"
 
@@ -16,10 +17,11 @@ import (
 
 func SearchTutorials() gin.HandlerFunc {
 	return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 
 		title := c.Query("title")
+		title = html.EscapeString(title)
 
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
@@ -53,8 +55,8 @@ func SearchTutorials() gin.HandlerFunc {
 
 func CreateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
@@ -86,8 +88,8 @@ func CreateTutorial() gin.HandlerFunc {
 
 func UpdateTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
@@ -95,7 +97,7 @@ func UpdateTutorial() gin.HandlerFunc {
 		ID := c.Param("id")
 		println(ID)
 		var tutorial models.Tutorial
-		
+
 		objId, _ := primitive.ObjectIDFromHex(ID)
 
 		if err := c.BindJSON(&tutorial); err != nil {
@@ -138,8 +140,8 @@ func UpdateTutorial() gin.HandlerFunc {
 
 func DeleteTutorial() gin.HandlerFunc {
 	return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
