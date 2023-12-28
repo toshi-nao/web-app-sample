@@ -44,7 +44,7 @@
           </div>
   
           <a class="badge badge-warning"
-            :href="'/tutorials/' + currentTutorial.id"
+            :href="'/tutorials/' + currentTutorial.Id"
           >
             Edit
           </a>
