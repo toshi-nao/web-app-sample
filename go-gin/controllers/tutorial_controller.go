@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go-gin/configs"
 	"go-gin/models"
+	"html"
 	"net/http"
 	"time"
 
@@ -14,14 +15,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetAllTutorials() gin.HandlerFunc {
+func SearchTutorials() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
+    title := c.Query("title")
+		title = html.EscapeString(title)
+
 		client := configs.ConnectDB()
 		collection := client.Database("tutorial").Collection("tutorial_collection")
-		filter := bson.D{{}}
+		filter := bson.M{"title": bson.M{"$regex": title, "$options": "i"}}
 
 		cursor, err := collection.Find(ctx, filter)
 
